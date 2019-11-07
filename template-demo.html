@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+
+<!--
+	Това е демо-шаблон на първото домашно задание по ОКГ.
+	Вижте коментарите във файла, за да разберете къде да променяте.
+	
+	Разделяне/слепване на двете части на йероглифа:
+		клик с ляв бутон или клавиш "интервал"
+		
+	Показване/скриване на рамката:
+		клик с десен бутон или някой друг клавиш
+-->
+	
+<html>
+	<head>
+		<script src="three.min.js"></script>
+		<script src="kanji.js"></script>
+	</head>
+	
+	<body onload="main()">
+		<!-- В тага h1 си напишете факултетния номер, групата в Мудъл и двете си имена-->
+		<h1>ф.н. 81805 &ndash; група 4 &ndash; Николай Кормушев</h1>
+
+		<!-- В този script таг напишете кода си за създаване на
+		йероглифа в две половини, разделени с диагонална черта
+		от горе-ляво до долу-дясно. Кодът по-долу е само примерен.
+		Махнете го и сложете вашия код на негово място. -->
+		<script>
+			// Елементите, които принадлежат на горната-дясна половина
+			// на йероглифа ги добавете към обекта PART1, а елементите
+			// на долната-лява половина - в PART2.
+			
+			// Кодът по-надолу създава две стъпаловидни половини на
+			// плочка; целта е да се покаже как да използвате двата
+			// обекта PART1 и PART2 (те са създадени в kanji.js и
+			// пак от там се манипулират, затова не им променяйте
+			// имената).
+			
+			function InitializePrisms(prism, coords, rotation) {
+				prism.position.set(coords[0], coords[1], coords[2]);		
+				prism.rotateX(rotation[0]);
+				prism.rotateY(rotation[1]);
+				prism.rotateZ(rotation[2]);	
+			}
+			
+			function myPrismGeometry(width, height, depth) {
+				let geometry = new THREE.Geometry();
+				
+				for(let i = -depth/2; i <= depth/2; i+=depth) {
+					let verticesX = new THREE.Vector3(width,0,i);
+					let verticesY = new THREE.Vector3(0,height,i);
+					let verticesZ = new THREE.Vector3(0,0,i);
+					geometry.vertices.push(verticesX);
+					geometry.vertices.push(verticesY);
+					geometry.vertices.push(verticesZ);
+				}
+				
+				geometry.faces.push(new THREE.Face3(0,1,2));
+				geometry.faces.push(new THREE.Face3(0,2,5));
+				geometry.faces.push(new THREE.Face3(0,3,5));
+				geometry.faces.push(new THREE.Face3(0,1,4));
+				geometry.faces.push(new THREE.Face3(0,3,4));
+				geometry.faces.push(new THREE.Face3(2,5,4));
+				geometry.faces.push(new THREE.Face3(2,1,4));
+				geometry.faces.push(new THREE.Face3(3,4,5));
+				
+				geometry.computeFaceNormals();
+				
+				return geometry;
+			}
+			
+			// Създаваме си материал за елементите - добре е да не
+			// е прекалено ярък или тъмен, за да се виждат добре нещата.
+			var material = new THREE.MeshPhongMaterial({color:'gray',shininess:100, vertexColors: THREE.FaceColors});
+			material.side = THREE.DoubleSide;
+			
+			var extrudeSettings = {
+				amount: 6,
+				bevelEnabled: false,
+			};
+
+			let pi2 = Math.PI/2;
+			
+			let prismGeometry = myPrismGeometry(3/2, 3/2, 6);
+			
+			// Дефинираме елементите на горната-дясна половина (с имена по наш избор).
+			//Right half box deifinitions
+			let littleBoxForSecondHorizBarTopToBot = new THREE.Mesh( new THREE.BoxGeometry(1/2, 1, 6), material );
+			let secondHorizBarTopToBotRightHalf = new THREE.Mesh( new THREE.BoxGeometry(12.25, 3/2, 6), material );
+			let upperHalfLongMiddleBar = new THREE.Mesh( new THREE.BoxGeometry(3/2, 7, 6), material );
+			let thirdHorizBarTopToBot = new THREE.Mesh ( new THREE.BoxGeometry(8.75,3/2,6), material);
+			let fourthHorizBarTopToBotRightHalf = new THREE.Mesh ( new THREE.BoxGeometry(4.5,3/2,6), material);
+			let topBar = new THREE.Mesh ( new THREE.BoxGeometry(17,3/2,6), material);
+			let topHorizBarLeft = new THREE.Mesh ( new THREE.BoxGeometry(3/2,3.25,6), material);
+			let topHorizBarRight = new THREE.Mesh ( new THREE.BoxGeometry(3/2,3.25,6), material);
+			let fifthHorizBarTopToBotRightHalf = new THREE.Mesh( new THREE.BoxGeometry(3, 3/2, 6), material);
+			let rightHorizontalBar = new THREE.Mesh( new THREE.BoxGeometry(3/2, 4, 6), material);
+			let secondBarBotToTopRightHalf = new THREE.Mesh( new THREE.BoxGeometry(3, 3/2, 6), material);
+			
+			topHorizBarRight.position.set(4,8,0);
+			fourthHorizBarTopToBotRightHalf.position.set(5.5,0.25,0)
+			fifthHorizBarTopToBotRightHalf.position.set(6.25, -2.75, 0);
+			topHorizBarLeft.position.set(-3.75,8,0);
+			thirdHorizBarTopToBot.position.set(3.36, 2.75, 0);
+			topBar.position.set(1.5, 8, 0);
+			secondHorizBarTopToBotRightHalf.position.set(2.87, 5, 0);
+			upperHalfLongMiddleBar.position.set(2.5, 3, 0);	
+			littleBoxForSecondHorizBarTopToBot.position.set(-3.5, 5.25, 0);
+			rightHorizontalBar.position.set(7,0,0)
+			secondBarBotToTopRightHalf.position.set(8.75, -5.0, 0);
+			
+			//Right half prism definitions
+			let secondHorizBarTopToBotRightHalfPrism = new THREE.Mesh( myPrismGeometry(1/2,1/2,6), material);
+			let upperHalfLongMiddleBarTopPrism = new THREE.Mesh( prismGeometry, material);
+			let thirdHorizBarTopToBotRightHalfPrism = new THREE.Mesh(prismGeometry, material);
+			let topBarRightPrism = new THREE.Mesh(prismGeometry, material);
+			let fourthHorizBarTopToBotRightHalfPrism = new THREE.Mesh(prismGeometry, material);
+			let fifthHorizBarTopToBotRightHalfPrism = new THREE.Mesh(prismGeometry, material);
+			let secondBarBotToTopRightHalfPrism = new THREE.Mesh(prismGeometry, material);
+			let bottomBarRightHalfPrism = new THREE.Shape();
+			bottomBarRightHalfPrism.moveTo(10, -7.75);
+			bottomBarRightHalfPrism.lineTo(9.75, -8.25);
+			bottomBarRightHalfPrism.lineTo(9.5, -7.75);
+			let bottomBarRightHalfGeometry = new THREE.ExtrudeGeometry(bottomBarRightHalfPrism, extrudeSettings);
+			let bottomBarRightHalfPrismMesh = new THREE.Mesh(bottomBarRightHalfGeometry, material); 
+			bottomBarRightHalfPrismMesh.position.z -= 3
+			
+
+			InitializePrisms(secondHorizBarTopToBotRightHalfPrism, new Array(-3.25, 4.75, 0), new Array(0, 2 * pi2, -pi2));
+			InitializePrisms(upperHalfLongMiddleBarTopPrism, new Array(3.25, -0.5, 0), new Array(0, 2 * pi2, -pi2));
+			InitializePrisms(thirdHorizBarTopToBotRightHalfPrism, new Array(-1, 3.5, 0), new Array(0, 2 * pi2, -pi2));
+			InitializePrisms(topBarRightPrism, new Array(-7, 8.75, 0), new Array(0, 2 * pi2, -pi2));
+			InitializePrisms(fourthHorizBarTopToBotRightHalfPrism, new Array(1.75, 1, 0), new Array(0, 2*pi2, -pi2));
+			InitializePrisms(fifthHorizBarTopToBotRightHalfPrism, new Array(4.75, -2, 0), new Array(0, 2*pi2, -pi2));
+			InitializePrisms(secondBarBotToTopRightHalfPrism, new Array(7.25, -4.25, 0), new Array(0, 2*pi2, -pi2));
+
+			// Добавяме ги към обекта PART1 (името е фиксирано).
+			part1.add( secondHorizBarTopToBotRightHalfPrism, upperHalfLongMiddleBarTopPrism, secondHorizBarTopToBotRightHalf, upperHalfLongMiddleBar, 
+					   littleBoxForSecondHorizBarTopToBot, thirdHorizBarTopToBotRightHalfPrism, thirdHorizBarTopToBot, topBar, topBarRightPrism,
+					   topHorizBarLeft, topHorizBarRight, fourthHorizBarTopToBotRightHalf, fourthHorizBarTopToBotRightHalfPrism, fifthHorizBarTopToBotRightHalfPrism, 
+					   fifthHorizBarTopToBotRightHalf, rightHorizontalBar, secondBarBotToTopRightHalfPrism, secondBarBotToTopRightHalf, bottomBarRightHalfPrismMesh);					   			
+					   
+			// part1.position.set(-5, 0, 0);
+			// part1.rotateX(pi2/4); 
+			// part1.rotateY(pi2/2); 
+			// part2.rotateX(pi2/4); 
+			
+			//Left Half box definitions
+			let fourthHorizBarTopToBotLeftHalf = new THREE.Mesh( new THREE.BoxGeometry(2.75, 3/2, 6), material);
+			let topBarLeft = new THREE.Mesh( new THREE.BoxGeometry(2, 3/2, 6), material);
+			let fifthHorizBarTopToBotLeftHalf = new THREE.Mesh( new THREE.BoxGeometry(5.5, 3/2, 6), material);
+			let leftHorizontalBar = new THREE.Mesh( new THREE.BoxGeometry(3/2, 4, 6), material);
+			let secondBarBotToTopLeftHalf = new THREE.Mesh(new THREE.BoxGeometry(10.5, 3/2, 6), material); 
+			let middleBarBotHalf = new THREE.Mesh(new THREE.BoxGeometry(3/2, 4.75, 6), material); 
+
+			fourthHorizBarTopToBotLeftHalf.position.set(-1.11,0.25,0);
+			topBarLeft.position.set(-9.5,8,0);
+			fifthHorizBarTopToBotLeftHalf.position.set(0.25, -2.75, 0);
+			leftHorizontalBar.position.set(-1.75, 0,0);
+			secondBarBotToTopLeftHalf.position.set(0.5, -5, 0);
+			middleBarBotHalf.position.set(2.5,-4.38,0);
+
+			let smallCurve = new THREE.Shape();
+			smallCurve.moveTo(-10, 5);
+			smallCurve.lineTo(-8, 6);	
+			smallCurve.quadraticCurveTo(-6, 5, -5 , 4);
+			smallCurve.lineTo(-7, 3);
+            smallCurve.quadraticCurveTo(-8, 4, -10, 5);
+			let smallCurveLeftGeometry = new THREE.ExtrudeGeometry(smallCurve, extrudeSettings);
+			let smallCurveLeftMesh = new THREE.Mesh(smallCurveLeftGeometry, material);
+			smallCurveLeftMesh.position.z -=3;
+			
+			let largeCurve = new THREE.Shape();
+			largeCurve.moveTo(-10, 2);
+			largeCurve.lineTo(-10, 0.5);
+			largeCurve.lineTo(-8, 0.5);
+			largeCurve.lineTo(-8, -6.5);
+			largeCurve.lineTo(-10, -8.5);
+			largeCurve.lineTo(-8, -9.5);
+			largeCurve.lineTo(-7, -7.5);
+			largeCurve.quadraticCurveTo(-9,-8.75, -3, -9.25);
+			largeCurve.lineTo(9.25, -9.25);
+			largeCurve.lineTo(9.75, -8.25);
+			largeCurve.lineTo(9.5, -7.75);
+			largeCurve.lineTo(-3, -7.75);
+			largeCurve.quadraticCurveTo(-7, -7.5, -6.5, -5 );
+			largeCurve.lineTo(-6.5, 2);
+
+			let largeCurveGeometry = new THREE.ExtrudeGeometry(largeCurve, extrudeSettings);
+			let largeCurveMesh = new THREE.Mesh(largeCurveGeometry, material); 
+			largeCurveMesh.position.z-=3;
+
+			
+			//Left half prism definitions
+			let secondHorizBarTopToBotLeftHalfPrism = new THREE.Mesh(myPrismGeometry(1/2, 1/2, 6), material);
+			let thirdHorizBarTopToBotLeftHalfPrism = new THREE.Mesh(prismGeometry, material);
+			let topBarLeftPrism = new THREE.Mesh(prismGeometry, material);
+			let fourthHorizBarTopToBotLeftHalfPrism = new THREE.Mesh(prismGeometry, material);
+			let fifthHorizBarTopToBotLeftHalfPrism = new THREE.Mesh(prismGeometry, material);
+			let upperHalfLongMiddleBarBottomPrism = new THREE.Mesh( prismGeometry, material);
+			let secondBotToTopBarLeftPrism = new THREE.Mesh( prismGeometry, material);
+			
+			InitializePrisms(secondHorizBarTopToBotLeftHalfPrism, new Array(-3.75, 4.25, 0), new Array(0, 0, 0));
+			InitializePrisms(thirdHorizBarTopToBotLeftHalfPrism, new Array(-2.5, 2, 0), new Array(0,0,0));
+			InitializePrisms(topBarLeftPrism, new Array( -8.5, 7.25, 0), new Array(0, 0, 0));
+			InitializePrisms(fourthHorizBarTopToBotLeftHalfPrism, new Array(0.25, -0.5,0),  new Array(0, 0, 0));
+			InitializePrisms(fifthHorizBarTopToBotLeftHalfPrism, new Array(3.25, -3.5, 0), new Array(0,0,0));
+			InitializePrisms(upperHalfLongMiddleBarBottomPrism, new Array(1.75, -2, 0), new Array(0,0,0));
+			InitializePrisms(secondBotToTopBarLeftPrism, new Array(5.75, -5.75, 0), new Array(0,0,0));
+			
+			part2.add(secondHorizBarTopToBotLeftHalfPrism, thirdHorizBarTopToBotLeftHalfPrism, topBarLeftPrism, fourthHorizBarTopToBotLeftHalfPrism,
+					fourthHorizBarTopToBotLeftHalf, leftHorizontalBar, topBarLeft, fifthHorizBarTopToBotLeftHalfPrism, upperHalfLongMiddleBarBottomPrism, 
+					fifthHorizBarTopToBotLeftHalf, secondBotToTopBarLeftPrism, secondBarBotToTopLeftHalf, middleBarBotHalf, smallCurveLeftMesh, largeCurveMesh);
+			
+	
+			// Файлът kanji.js се грижи да нарисува земята и двете половини
+			// на йероглифа; грижи се и раздалечаването и приближаването на
+			// тези половини; показване/скриване на рамката; звукови ефекти
+			// и потрепване. Това е само за ваша информация, ако евентуално
+			// се чудете къде се прави магията. Това май е най-подравненият
+			// коментар досега -- както отляво, така и отдясно е подравнен.
+		</script>
+	</body>
+</html>
